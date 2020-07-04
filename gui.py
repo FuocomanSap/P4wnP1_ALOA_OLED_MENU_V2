@@ -18,7 +18,7 @@ import base64
 import struct
 import smbus2 as smbus
 
-UPS = 1 # 1 = UPS Lite connected / 0 = No UPS Lite hat
+UPS = 0 # 1 = UPS Lite connected / 0 = No UPS Lite hat
 SCNTYPE = 1  # 1= OLED #2 = TERMINAL MODE BETA TESTS VERSION
 
 def readVoltage(bus):
@@ -39,7 +39,7 @@ def readCapacity(bus):
         return capacity
 
 #not needed if you are using spi(like me -fuocoman)
-bus = smbus.SMBus(0)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
+#bus = smbus.SMBus(0)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
 GPIO.setwarnings(False)
 #P4wnP1 essential const
@@ -84,7 +84,7 @@ KEY_PRESS_PIN  = 13 #stick center button
 KEY1_PIN       = 21 #key 1 // up
 KEY2_PIN       = 20  #20 #key 2 // cancel/goback
 KEY3_PIN       = 16 #key 3 // down
-USER_I2C = 1      #set to 1 if your oled is I2C or  0 if use SPI interface
+USER_I2C = 0      #set to 1 if your oled is I2C or  0 if use SPI interface
 #init GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(KEY_UP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Input with pull-up
