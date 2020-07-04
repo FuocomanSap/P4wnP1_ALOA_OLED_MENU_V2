@@ -1086,7 +1086,7 @@ def menu2():
         print(result)
         
         
-def testpurpose():
+def hostselect():
     cmd = "hostname -I"
     subnetIp = str(subprocess.check_output(cmd, shell = True )).split(" ")[0].split("'")[1]
     pos = subnetIp.rfind('.')
@@ -1096,6 +1096,8 @@ def testpurpose():
     del hostlist[-1]
     del hostlist[-1]
     del hostlist[0]
+    for i in range(0,len(hostlist)):
+        hostlist[i] = hostlist[i][21:]
     #print(hostlist[i][21:])
     fichier = hostlist 
     maxi = len(hostlist)
@@ -1146,12 +1148,17 @@ def testpurpose():
             menu = 1
         else: # button is pressed:
             retour = fichier[cur]
-            print(retour)
-            return(retour)    
+            selected= retour.split("(")[1].split(")")[0]
+            print(selected)
+            #return(retour)
+            return(selected)    
         # ----------
         DisplayText(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6])
         time.sleep(0.1)
 
+def testpurpose():
+    selected = hostselect()
+    print(selected)
 
 
 def main():
