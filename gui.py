@@ -8,7 +8,7 @@ from luma.oled.device import sh1106
 import RPi.GPIO as GPIO
 import datetime
 import time
-import subprocess
+
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -550,7 +550,7 @@ def restart():
     "",
     ""
     )
-    cmd="python /root/BeBoXGui/runmenu.py &"
+    cmd="python3.7 /root/BeBoXGui/runmenu.py &"
     exe = subprocess.check_output(cmd, shell = True )
     return()
 def GetTemplateList(type):
@@ -1142,9 +1142,10 @@ while 1:
                     #subprocess.check_output(cmd, shell = True )    
                     restart()
                 if curseur == 7:
+                    exit()    
                     cmd = "poweroff"
                     subprocess.check_output(cmd, shell = True )    
-                    exit()
+                    
             if page == 14:
                 #HID related menu
                 if curseur == 1:
