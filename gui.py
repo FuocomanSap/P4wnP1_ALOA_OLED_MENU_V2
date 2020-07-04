@@ -1086,7 +1086,7 @@ def menu2():
         print(result)
         
         
-def purpose():
+def testpurpose():
     cmd = "hostname -I"
     subnetIp = str(subprocess.check_output(cmd, shell = True )).split(" ")[0].split("'")[1]
     pos = subnetIp.rfind('.')
