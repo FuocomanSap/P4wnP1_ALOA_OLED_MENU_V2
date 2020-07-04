@@ -154,7 +154,7 @@ def switch_menu(argument):
         19: "_",
         20: "_",
         21: "_Scan WIFI AP",
-        22: "testNmap",
+        22: "_testPurpose",
         23: "_",
         24: "_",
         25: "_",
@@ -1234,7 +1234,7 @@ while 1:
                 if curseur == 1:
                     #SSID LIST
                     scanwifi()
-                if curseur == 1:
+                if curseur == 2:
                     #testPurposeOnly
                     testpurpose()       
             if page == 28:
