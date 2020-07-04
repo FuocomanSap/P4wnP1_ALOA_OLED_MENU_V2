@@ -154,8 +154,8 @@ def switch_menu(argument):
         19: "_",
         20: "_",
         21: "_Scan WIFI AP",
-        22: "_",
-        23: "_",
+        22: "_Hosts Discovery",
+        23: "_Nmap",
         24: "_",
         25: "_",
         26: "_",
@@ -190,8 +190,8 @@ def switch_menu(argument):
         54: "_newsubmenu6",
         55: "_newsubmenu7",
         #newsections
-        56: "_listHostsWifi",
-        57: "_nmap",
+        56: "_testpurpose",
+        57: "_",
         58: "_",
         59: "_",
         60: "_",
@@ -1176,9 +1176,23 @@ def hostselect():
 def nmap():
     selected = hostselect()
     cmd = "nmap -Pn -A " + selected + " | grep tcp"
+    choise = 0
+     
+    while(choise == 0):
+        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/<IP>.txt   ","","                   NO")
+        if (not GPIO.input(KEY1_PIN)): # button is released
+            choise = 1 #A button
+        if not GPIO.input(KEY3_PIN): # button is released   
+            choise = 2
     try:
         DisplayText("","","","    wait ","","","")
         res = str(subprocess.check_output(cmd, shell = True ))
+        if(choise==1):
+            cmd = "nmap -Pn -A " + selected
+            res1 = str(subprocess.check_output(cmd, shell = True ))
+            f = open(str(selected) + ".txt","w+")
+            f.write(res1)
+            f.close()
     except:
         DisplayText("","","","     empty result","","","")
         time.sleep(1)
@@ -1285,8 +1299,9 @@ while 1:
                     #SSID LIST
                     scanwifi()
                 if curseur == 2:
-                    #testPurposeOnly
-                    testpurpose()       
+                    hostselect()
+                if curseur == 3:
+                    nmap()       
             if page == 28:
                     #trigger section
                 if curseur == 1:
@@ -1398,9 +1413,7 @@ while 1:
             
             if (page == 56):
                 if curseur == 1:
-                    hostselect()
-                if curseur == 2:
-                    nmap()
+                    testpurpose()
             
 
             #main menus section
