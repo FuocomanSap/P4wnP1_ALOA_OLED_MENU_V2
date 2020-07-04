@@ -154,7 +154,7 @@ def switch_menu(argument):
         19: "_",
         20: "_",
         21: "_Scan WIFI AP",
-        22: "_testPurpose",
+        22: "_",
         23: "_",
         24: "_",
         25: "_",
@@ -180,7 +180,24 @@ def switch_menu(argument):
         45: "_",
         46: "_",
         47: "_",
-        48: "_"
+        48: "_",
+        #newmenu
+        49: "_hosts things",
+        50: "_newsubmenu2",
+        51: "_newsubmenu3",
+        52: "_newsubmenu4",
+        53: "_newsubmenu5",
+        54: "_newsubmenu6",
+        55: "_newsubmenu7",
+        #newsections
+        56: "_listHostsWifi",
+        57: "_nmap",
+        58: "_",
+        59: "_",
+        60: "_",
+        61: "_",
+        62: "_"
+
 }
     return switcher.get(argument, "Invalid")
 def about():
@@ -1156,10 +1173,27 @@ def hostselect():
         DisplayText(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6])
         time.sleep(0.1)
 
-def testpurpose():
+def nmap():
     selected = hostselect()
-    print(selected)
-
+    cmd = "nmap -Pn -A " + selected + " | grep tcp"
+    try:
+        DisplayText("","","","    wait ","","","")
+        res = str(subprocess.check_output(cmd, shell = True ))
+    except:
+        DisplayText("","","","     empty result","","","")
+        time.sleep(1)
+        return()
+    
+    res = res.split("'")[1].split("\\n")[:-1]
+    print(res)
+    toprint = ["","","","","","",""]
+    for i in range(0,len(res)):
+        if(i>=len(toprint)): break
+        toprint[i]="_"+res[i]
+    DisplayText(toprint[0],toprint[1],toprint[2],toprint[3],toprint[4],toprint[5],toprint[6])
+    time.sleep(10)
+    #TODO add the vulnerability scan
+    #TODO save the report
 
 def main():
     socketCreate()
@@ -1182,7 +1216,12 @@ while 1:
     else: # button is pressed:
         curseur = curseur -1
         if curseur<1:
-            curseur = 7     
+            if( page == 49): 
+                page = 0
+            elif (page == 0):
+                page = 49   
+            curseur = 7
+  
     if GPIO.input(KEY_LEFT_PIN): # button is released
         menu = 1
     else: # button is pressed:
@@ -1197,6 +1236,10 @@ while 1:
     else: # button is pressed:
         curseur = curseur + 1
         if curseur>7:
+            if( page == 0):
+                page = 49
+            elif (page == 49):
+                page = 0
             curseur = 1
     #-----------
     if selection == 1:
@@ -1352,6 +1395,19 @@ while 1:
                             answer = 2
                     if answer == 1:
                         shell("P4wnP1_cli hid job 'gui inject revshell user.js'")                    
+            
+            if (page == 56):
+                if curseur == 1:
+                    hostselect()
+                if curseur == 2:
+                    nmap()
+            
+
+            #main menus section
+            if (page == 49):
+                if curseur == 1:
+                    page = 56
+           
             if page == 0:
             #we are in main menu
                 if curseur == 1:
