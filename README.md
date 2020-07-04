@@ -18,7 +18,7 @@ and find and set spi section
 * dtparam=spi=on
 
 
-# Note for SPI: (on gui.py)
+### Note for SPI: (on gui.py)
 
 * comment the "bus = smbus.SMBus(0)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)" line
 * set USER_I2C=0
