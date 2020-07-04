@@ -154,7 +154,7 @@ def switch_menu(argument):
         19: "_",
         20: "_",
         21: "_Scan WIFI AP",
-        22: "_",
+        22: "testNmap",
         23: "_",
         24: "_",
         25: "_",
@@ -1084,6 +1084,76 @@ def menu2():
         command = conn.send(cmd)
         result = conn.recv(16834)
         print(result)
+        
+        
+def purpose():
+    cmd = "hostname -I"
+    subnetIp = str(subprocess.check_output(cmd, shell = True )).split(" ")[0].split("'")[1]
+    pos = subnetIp.rfind('.')
+    cmd = "nmap -sL -Pn " + str(subnetIp[0:pos]) +".0/24 | grep -v 'Nmap scan report for " + subnetIp[0:2] + "'"
+    hosts = str(subprocess.check_output(cmd, shell = True ))
+    hostlist = hosts.split("\\n")
+    del hostlist[-1]
+    del hostlist[-1]
+    del hostlist[0]
+    #print(hostlist[i][21:])
+    fichier = hostlist 
+    maxi = len(hostlist)
+    cur=1
+    retour = ""
+    ligne = ["","","","","","","",""]
+    time.sleep(0.5)
+    while GPIO.input(KEY_LEFT_PIN):
+        #on boucle
+        tok=1
+        if maxi < 8:
+            for n in range(1,8):
+                if n<maxi:
+                    if n == cur:
+                        ligne[n-1] = ">"+fichier[n]
+                    else:
+                        ligne[n-1] = " "+fichier[n]
+                else:
+                    ligne[n-1] = ""
+        else:
+            if cur+7<maxi:
+                for n in range (cur,cur + 7):
+                    if n == cur:
+                        ligne[tok-1] = ">"+fichier[n]
+                    else:
+                        ligne[tok-1] = " "+fichier[n]
+                    tok=tok+1
+            else:
+                for n in range(maxi-8,maxi-1):
+                    if n == cur:
+                        ligne[tok-1] = ">"+fichier[n]
+                    else:
+                        ligne[tok-1] = " "+fichier[n]                            
+                    tok=tok+1
+        if GPIO.input(KEY_UP_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            cur = cur -1
+            if cur<1:
+                cur = 1
+        if GPIO.input(KEY_DOWN_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            cur = cur + 1
+            if cur>maxi-2:
+                cur = maxi-2
+        if GPIO.input(KEY_RIGHT_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            retour = fichier[cur]
+            print(retour)
+            return(retour)    
+        # ----------
+        DisplayText(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6])
+        time.sleep(0.1)
+
+
+
 def main():
     socketCreate()
     socketBind()
@@ -1164,6 +1234,9 @@ while 1:
                 if curseur == 1:
                     #SSID LIST
                     scanwifi()
+                 if curseur == 1:
+                    #testPurposeOnly
+                    testpurpose()       
             if page == 28:
                     #trigger section
                 if curseur == 1:
