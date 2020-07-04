@@ -1234,7 +1234,7 @@ while 1:
                 if curseur == 1:
                     #SSID LIST
                     scanwifi()
-                 if curseur == 1:
+                if curseur == 1:
                     #testPurposeOnly
                     testpurpose()       
             if page == 28:
