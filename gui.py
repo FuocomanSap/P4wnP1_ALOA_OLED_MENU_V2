@@ -1363,6 +1363,8 @@ def update():
     try:
         #Popen(['nohup','/bin/bash','/root/BeBoXGui/update.sh'], stdout=open('/dev/null','w'), stderr=open('/dev/null','a'),preexec_fn=os.setpgrp )
         Popen(['nohup','/bin/bash','/root/BeBoXGui/update.sh'],preexec_fn=os.setpgrp)
+        DisplayText("updating","it's a quite buggy","im updating","the screen will freeze","it's normal","im not restarting myself",":>")
+        time.sleep(10)
         exit()
     except:
         displayError()
