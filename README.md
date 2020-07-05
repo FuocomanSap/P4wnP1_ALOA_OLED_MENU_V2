@@ -3,7 +3,7 @@ this is a fork of: https://github.com/beboxos/P4wnP1_ALOA_OLED_MENU_V2
 I updated the code to work with python3.7, fixed some bugs and added new features.
 * hosts discovery
 * nmap on a specific host and save the report
-* update the guy-code via gui-option
+* update the gui-code via gui-option
 * vulnerability scan (experimental...help me)
 * TODO others
 
