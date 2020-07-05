@@ -184,7 +184,7 @@ def switch_menu(argument):
         21: "_Scan WIFI AP",
         22: "_Hosts Discovery",
         23: "_Nmap",
-        24: "_",
+        24: "_Vulnerability Scan",
         25: "_",
         26: "_",
         27: "_",
@@ -210,13 +210,13 @@ def switch_menu(argument):
         47: "_",
         48: "_",
         #newmenu
-        49: "_hosts things",
+        49: "_WIRED THINGS",
         50: "_newsubmenu2",
         51: "_newsubmenu3",
         52: "_newsubmenu4",
         53: "_newsubmenu5",
         54: "_newsubmenu6",
-        55: "_newsubmenu7",
+        55: "_UpdateOledMenu",
         #newsections
         56: "_Nmap 172.16.0.2",
         57: "_",
@@ -224,7 +224,15 @@ def switch_menu(argument):
         59: "_",
         60: "_",
         61: "_",
-        62: "_UpdateOledMenu"
+        62: "_",
+        #newsections
+        63: "_",
+        64: "_",
+        65: "_",
+        66: "_",
+        67: "_",
+        68: "_",
+        69: "_"
 
 }
     return switcher.get(argument, "Invalid")
@@ -1167,6 +1175,7 @@ def menu2():
         
         
 def hostselect():
+    DisplayText("","","","wait, may take a while ","","","")
     cmd = "hostname -I"
     res = execcmd(cmd)
     if(res==-1):
@@ -1248,7 +1257,7 @@ def nmap():
     selected = hostselect()
     choise = 0  
     while(choise == 0):
-        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/<IP>.txt   ","","                   NO")
+        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/nmap/<IP>.txt   ","","                   NO")
         if (not GPIO.input(KEY1_PIN)): # button is released
             choise = 1 #A button
         if not GPIO.input(KEY3_PIN): # button is released   
@@ -1261,13 +1270,13 @@ def nmap():
         if(ret==-1):
             displayError()
             return()
-        f = open(str(selected) + ".txt","w+")
+        f = open("nmap/" + str(selected) + ".txt","w+")
         reportList = str(ret).split("'")[1].split("\\n")
         for line in reportList:
             #print(line + "\\n")
             f.write(line + "\n")
         f.close()
-        cmd = "cat " + selected +".txt | grep tcp"
+        cmd = "cat " + "nmap/" + selected +".txt | grep tcp"
         ret = execcmd(cmd)
         if( ret ==-1):
             displayError()
@@ -1295,7 +1304,7 @@ def nmapLocal():
     selected = "172.16.0.2"
     choise = 0  
     while(choise == 0):
-        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/<IP>.txt   ","","                   NO")
+        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/nmap/<IP>.txt   ","","                   NO")
         if (not GPIO.input(KEY1_PIN)): # button is released
             choise = 1 #A button
         if not GPIO.input(KEY3_PIN): # button is released   
@@ -1308,7 +1317,7 @@ def nmapLocal():
         if(ret==-1):
             displayError()
             return()
-        f = open(str(selected) + ".txt","w+")
+        f = open("nmap/" + str(selected) + ".txt","w+")
         reportList = str(ret).split("'")[1].split("\\n")
         for line in reportList:
             #print(line + "\\n")
@@ -1346,6 +1355,44 @@ def update():
         displayError()
         DisplayText("","","","Do U have Wifi Connection? ","","","")
         time.sleep(5)
+
+def vulnerabilityScan():
+    DisplayText("Remeber:","Firts u need to","perform an Nmap","and then safe the output","","","")
+    time.sleep(5)
+    DisplayText("","","","this is experimental :C","","","")
+    time.sleep(5)
+    selected = FileSelect("/root/BeBoXGui/nmap/",".txt")
+    filePath = "/root/BeBoXGui/nmap/" + selected
+    cmd = "cat " + filePath + " | grep tcp"
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        time.sleep(5)
+    #print(res)
+    toSearch = str(res).split("'")[1].split("\\n")
+    del toSearch[-1]
+    founded = 0
+    for i in toSearch:
+        #print(i)
+        i = i[23:]
+        auxi = i.split(" ")
+        print(auxi)
+        i = auxi[0] + " " + auxi[1][:-2]
+        print("search for: " + i )
+        cmd = "searchsploit " + str(i)
+        res = execcmd(cmd)
+        if(res==-1):
+            displayError()
+            time.sleep(5)
+        if ((str(res).split("'")[1])[1] == "-"):
+            founded +=1
+    print(founded)
+    DisplayText("","","","founded: " + founded ,"","","")
+
+    
+        
+    
+
 
 def main():
     socketCreate()
@@ -1439,7 +1486,9 @@ while 1:
                 if curseur == 2:
                     hostselect()
                 if curseur == 3:
-                    nmap()       
+                    nmap()     
+                if curseur == 3:
+                    vulnerabilityScan()       
             if page == 28:
                     #trigger section
                 if curseur == 1:
@@ -1552,6 +1601,8 @@ while 1:
             if (page == 56):
                 if curseur == 1:
                     nmapLocal()
+            
+
                 
             
 
