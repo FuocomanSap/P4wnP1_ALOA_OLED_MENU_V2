@@ -1,5 +1,5 @@
 #!/bin/bash 
-sleep(5)
+sleep 5
 List=$(ps -aux | grep '/gui.py' | head -n 1 | cut -d " " -f7)
 kill $List
 apt install git-all -y
