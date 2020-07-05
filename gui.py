@@ -609,12 +609,18 @@ def runhid():
         if answer == 1:
             # run as background job P4wnP1_cli hid job command
             cmd = "P4wnP1_cli hid job '" + fichier+"'"
-            result=subprocess.check_output(cmd, shell = True )
+            result=execcmd(cmd)
+            if(result==-1):
+                displayError()
+                return()
             return()
         if answer == 3:
             # run hid script directly
             cmd = "P4wnP1_cli hid run '" + fichier+"'"
-            result=subprocess.check_output(cmd, shell = True )
+            result=execcmd(cmd)
+            if(result==-1):
+                displayError()
+                return()
             return()
 def restart():
     DisplayText(
@@ -627,7 +633,10 @@ def restart():
     ""
     )
     cmd="python3.7 /root/BeBoXGui/runmenu.py &"
-    exe = subprocess.check_output(cmd, shell = True )
+    exe = execcmd(cmd)
+    if(exe==-1):
+                displayError()
+                return()
     return()
 def GetTemplateList(type):
     # get list of template
@@ -687,7 +696,10 @@ def ApplyTemplate(template,section):
             return()
         time.sleep(0.5) #pause
         cmd = "P4wnP1_cli template deploy -" +section + " "+ template+""
-        exe = subprocess.check_output(cmd, shell = True )
+        exe = execcmd(cmd)
+        if(exe==-1):
+                displayError()
+                return()
         return()
 def Gamepad():
     if SCNTYPE == 1:
@@ -1463,7 +1475,7 @@ while 1:
                 if curseur == 7:
                     exit()    
                     cmd = "poweroff"
-                    subprocess.check_output(cmd, shell = True )    
+                    execcmd(cmd)   
                     
             if page == 14:
                 #HID related menu
