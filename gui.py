@@ -21,6 +21,32 @@ import smbus2 as smbus
 UPS = 0 # 1 = UPS Lite connected / 0 = No UPS Lite hat
 SCNTYPE = 1  # 1= OLED #2 = TERMINAL MODE BETA TESTS VERSION
 
+def execcmd(cmd):
+    try:
+        return (str(subprocess.check_output(cmd, shell = True )))
+    except:
+        return (-1)
+def execcmdNostr(cmd):
+    try:
+        return ((subprocess.check_output(cmd, shell = True )))
+    except:
+        return (-1)
+
+
+def displayError():
+    DisplayText(
+            "",
+            "",
+            "",
+            "      INTERNAL ERROR",
+            "",
+            "",
+            ""
+            )
+    time.sleep(5) 
+
+
+
 def readVoltage(bus):
         "This function returns as float the voltage from the Raspi UPS Hat via the provided SMBus object"
         address = 0x36
@@ -222,7 +248,10 @@ def sysinfos():
         today_time = now.strftime("%H:%M:%S")
         today_date = now.strftime("%d %b %y")
         cmd = "hostname -I"
-        qui = str(subprocess.check_output(cmd, shell = True ))
+        qui = execcmd(cmd)
+        if(qui==-1):
+            displayError()
+            return()
         IP = qui.split(" ")[0]
         IP2 = qui.split(" ")[1]
         IP3 = qui.split(" ")[2]
@@ -239,15 +268,31 @@ def sysinfos():
             batt=100
         BATT = volt + str(batt) + "% t:" + str(temp)
         #print(str(subprocess.check_output(cmd, shell = True )))
-        proc = "CPU:" + str(subprocess.check_output(cmd, shell = True )).split("'")[1] + "%"
+        res = execcmd(cmd)
+        if(res==-1):
+            displayError()
+            return()
+        proc = "CPU:" + res.split("'")[1] + "%"
         cmd = " cat /sys/class/thermal/thermal_zone0/temp "
-        cpuTemp = str(subprocess.check_output(cmd, shell = True )).split("'")[1].split("\\")[0]
+        res = execcmd(cmd)
+        if(res==-1):
+            displayError()
+            return()
+        cpuTemp = res.split("'")[1].split("\\")[0]
         cpuTemp = str(int(cpuTemp)/1000)
         proc += " Temp: " + cpuTemp
         cmd = "free -m | awk 'NR==2{printf \"MEM :%.2f%%\", $3*100/$2 }'"
-        MemUsage = str(subprocess.check_output(cmd, shell = True )).split("'")[1] # + proc
+        res = execcmd(cmd)
+        if(res==-1):
+            displayError()
+            return()
+        MemUsage = res.split("'")[1] # + proc
         cmd = "df -h | awk '$NF==\"/\"{printf \"Disk: %d/%dGB %s\", $3,$2,$5}'"
-        Disk = str(subprocess.check_output(cmd, shell = True )).split("'")[1]   
+        res = execcmd(cmd)
+        if(res==-1):
+            displayError()
+            return()
+        Disk = res.split("'")[1]   
         DisplayText(
             "WIFI: " + IP.split("'")[1],
             #str(BATT)
@@ -348,7 +393,11 @@ def KeyTest():
                         draw.ellipse((70,40,90,60), outline=255, fill=1) #A button filled
 def FileSelect(path,ext):
     cmd = "ls -F --format=single-column  " + path + "*" + ext
-    listattack=str(subprocess.check_output(cmd, shell = True )).split("'")[1]
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    listattack=res.split("'")[1]
     listattack=listattack.replace(ext,"")
     listattack=listattack.replace(path,"")
     listattack=listattack.replace("*","")
@@ -574,7 +623,11 @@ def GetTemplateList(type):
     # get list of template
     # Possible types : FULL_SETTINGS , BLUETOOTH , USB , WIFI , TRIGGER_ACTIONS , NETWORK
     cmd = "P4wnP1_cli template list"
-    list = str(subprocess.check_output(cmd, shell = True ))
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    list = res
     list = list.replace("Templates of type ","") #remove uwanted text
     list = list.replace(" :","")
     list = list.replace("------------------------------------\n","")
@@ -802,12 +855,20 @@ def LwifiExt (word,liste):
 def scanwifi():
     #list wifi APs
     cmd ="sudo iwlist wlan0 scan | grep ESSID"
-    SSID=str(subprocess.check_output(cmd, shell = True )).split("'")[1]
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    SSID=res.split("'")[1]
     SSID=SSID.replace("                    ESSID:","")
     SSID=SSID.replace("\"","")
     ssidlist=SSID.split("\\n")
     cmd ="sudo iwlist wlan0 scan | grep Encryption"
-    Ekey=str(subprocess.check_output(cmd, shell = True )).split("'")[1]
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    Ekey=res.split("'")[1]
     Ekey=Ekey.replace("                    Encryption ","")
     Ekeylist=Ekey.split("\\n")     
     for n in range(0,len(ssidlist)):
@@ -1105,10 +1166,18 @@ def menu2():
         
 def hostselect():
     cmd = "hostname -I"
-    subnetIp = str(subprocess.check_output(cmd, shell = True )).split(" ")[0].split("'")[1]
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    subnetIp = res.split(" ")[0].split("'")[1]
     pos = subnetIp.rfind('.')
     cmd = "nmap -sL -Pn " + str(subnetIp[0:pos]) +".0/24 | grep -v 'Nmap scan report for " + subnetIp[0:2] + "'"
-    hosts = str(subprocess.check_output(cmd, shell = True ))
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    hosts = res
     hostlist = hosts.split("\\n")
     del hostlist[-1]
     del hostlist[-1]
@@ -1175,30 +1244,40 @@ def hostselect():
 
 def nmap():
     selected = hostselect()
-    cmd = "nmap -Pn -A " + selected + " | grep tcp"
-    choise = 0
-     
+    choise = 0  
     while(choise == 0):
         DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/<IP>.txt   ","","                   NO")
         if (not GPIO.input(KEY1_PIN)): # button is released
             choise = 1 #A button
         if not GPIO.input(KEY3_PIN): # button is released   
             choise = 2
-    try:
-        DisplayText("","","","    wait ","","","")
-        res = str(subprocess.check_output(cmd, shell = True ))
-        if(choise==1):
-            cmd = "nmap -Pn -A " + selected
-            res1 = str(subprocess.check_output(cmd, shell = True ))
-            f = open(str(selected) + ".txt","w+")
-            f.write(res1)
-            f.close()
-    except:
-        DisplayText("","","","     empty result","","","")
-        time.sleep(1)
-        return()
+    DisplayText("","","","    wait ","","","")
     
-    res = res.split("'")[1].split("\\n")[:-1]
+    if(choise==1):
+        cmd = "nmap -Pn -A " + selected
+        ret = execcmd(cmd)
+        if(ret==-1):
+            displayError()
+            return()
+        f = open(str(selected) + ".txt","w+")
+        reportList = str(ret).split("'")[1].split("\\n")
+        for line in reportList:
+            #print(line + "\\n")
+            f.write(line + "\n")
+        f.close()
+        cmd = "cat " + selected +".txt | grep tcp"
+        ret = execcmd(cmd)
+        if( ret ==-1):
+            displayError()
+            return()
+    else:
+        cmd = "nmap -Pn -A " + selected + " | grep tcp"
+        ret = execcmd(cmd)
+        if(ret==-1):
+            displayError()
+            return()
+
+    res = str(ret).split("'")[1].split("\\n")[:-1]
     print(res)
     toprint = ["","","","","","",""]
     for i in range(0,len(res)):
@@ -1207,7 +1286,7 @@ def nmap():
     DisplayText(toprint[0],toprint[1],toprint[2],toprint[3],toprint[4],toprint[5],toprint[6])
     time.sleep(10)
     #TODO add the vulnerability scan
-    #TODO save the report
+    
 
 def main():
     socketCreate()
