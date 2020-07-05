@@ -216,7 +216,7 @@ def switch_menu(argument):
         54: "_newsubmenu6",
         55: "_newsubmenu7",
         #newsections
-        56: "_testpurpose",
+        56: "_Nmap 172.16.0.2",
         57: "_",
         58: "_",
         59: "_",
@@ -1002,7 +1002,7 @@ def Osdetection():
                 "detection",
                 "",
                 "Too many fingerprints match this host",
-                "Maybe it's winzoz :>",
+                " Or Zero ",
                 "",
                 "Press LEFT to exit"
                 )
@@ -1286,7 +1286,57 @@ def nmap():
     DisplayText(toprint[0],toprint[1],toprint[2],toprint[3],toprint[4],toprint[5],toprint[6])
     time.sleep(10)
     #TODO add the vulnerability scan
+
+
+
+def nmapLocal():
+    selected = "172.16.0.2"
+    choise = 0  
+    while(choise == 0):
+        DisplayText("                  YES","","save the nmap?","this will take a while","/BeboXgui/<IP>.txt   ","","                   NO")
+        if (not GPIO.input(KEY1_PIN)): # button is released
+            choise = 1 #A button
+        if not GPIO.input(KEY3_PIN): # button is released   
+            choise = 2
+    DisplayText("","","","    wait ","","","")
     
+    if(choise==1):
+        cmd = "nmap -Pn -A " + selected
+        ret = execcmd(cmd)
+        if(ret==-1):
+            displayError()
+            return()
+        f = open(str(selected) + ".txt","w+")
+        reportList = str(ret).split("'")[1].split("\\n")
+        for line in reportList:
+            #print(line + "\\n")
+            f.write(line + "\n")
+        f.close()
+        cmd = "cat " + selected +".txt | grep tcp"
+        ret = execcmd(cmd)
+        if( ret ==-1):
+            displayError()
+            return()
+    else:
+        cmd = "nmap -Pn -A " + selected + " | grep tcp"
+        ret = execcmd(cmd)
+        if(ret==-1):
+            displayError()
+            return()
+
+    res = str(ret).split("'")[1].split("\\n")[:-1]
+    print(res)
+    toprint = ["","","","","","",""]
+    for i in range(0,len(res)):
+        if(i>=len(toprint)): break
+        toprint[i]="_"+res[i]
+    DisplayText(toprint[0],toprint[1],toprint[2],toprint[3],toprint[4],toprint[5],toprint[6])
+    time.sleep(10)
+    #TODO add the vulnerability scan
+
+    
+
+
 
 def main():
     socketCreate()
@@ -1492,7 +1542,7 @@ while 1:
             
             if (page == 56):
                 if curseur == 1:
-                    testpurpose()
+                    nmapLocal()
             
 
             #main menus section
