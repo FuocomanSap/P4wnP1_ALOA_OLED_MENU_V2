@@ -29,7 +29,7 @@ and find and set spi section
  ######  set USER_I2C=0
  ######  (if you don't have a ups) set UPS=0
 
-
+* chmod +x install.sh update.sh
 * run sh install.sh 
 the script will automatically install all the files needed
 
