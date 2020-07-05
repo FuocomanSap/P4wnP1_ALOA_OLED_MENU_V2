@@ -9,6 +9,8 @@ import RPi.GPIO as GPIO
 import datetime
 import time
 import subprocess
+from subprocess import Popen
+import os
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -222,7 +224,7 @@ def switch_menu(argument):
         59: "_",
         60: "_",
         61: "_",
-        62: "_"
+        62: "_UpdateOledMenu"
 
 }
     return switcher.get(argument, "Invalid")
@@ -1334,9 +1336,16 @@ def nmapLocal():
     time.sleep(10)
     #TODO add the vulnerability scan
 
-    
-
-
+def update():
+    DisplayText("","","","U NEED Wifi Connection ","","","")
+    time.sleep(8)
+    try:
+        Popen(['nohup','/bin/bash','/root/BeboXGui/update.sh'], stdout=open('/dev/null','w'), stderr=open('/dev/null','a'),preexec_fn=os.setpgrp )
+        exit()
+    except:
+        displayError()
+        DisplayText("","","","Do U have Wifi Connection? ","","","")
+        time.sleep(5)
 
 def main():
     socketCreate()
@@ -1543,12 +1552,15 @@ while 1:
             if (page == 56):
                 if curseur == 1:
                     nmapLocal()
+                
             
 
             #main menus section
             if (page == 49):
                 if curseur == 1:
                     page = 56
+                if curseur == 7:
+                    update()
            
             if page == 0:
             #we are in main menu
