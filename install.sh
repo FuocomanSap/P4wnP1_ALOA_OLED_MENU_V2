@@ -16,7 +16,7 @@ cd ..
 cp scripts/runmenu.sh /usr/local/P4wnP1/scripts/
 cp update.sh /root/BeBoXGui/
 mkdir /root/BeBoXGui/nmap
-chmod +x /root/BeboXGui/update.sh
+chmod +x /root/BeBoXGui/update.sh
 echo "All files are ready"
 echo "to run with P4wnP1 boot"
 echo "Go thru web interface"

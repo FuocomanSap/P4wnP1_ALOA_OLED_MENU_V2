@@ -1361,7 +1361,8 @@ def update():
     DisplayText("","","","U NEED Wifi Connection ","","","")
     time.sleep(8)
     try:
-        Popen(['nohup','/bin/bash','/root/BeboXGui/update.sh'], stdout=open('/dev/null','w'), stderr=open('/dev/null','a'),preexec_fn=os.setpgrp )
+        #Popen(['nohup','/bin/bash','/root/BeBoXGui/update.sh'], stdout=open('/dev/null','w'), stderr=open('/dev/null','a'),preexec_fn=os.setpgrp )
+        Popen(['nohup','/bin/bash','/root/BeBoXGui/update.sh'],preexec_fn=os.setpgrp)
         exit()
     except:
         displayError()
