@@ -185,7 +185,7 @@ def switch_menu(argument):
         22: "_Hosts Discovery",
         23: "_Nmap",
         24: "_Vulnerability Scan",
-        25: "_",
+        25: "_Deauther-Bcast",
         26: "_",
         27: "_",
         28: "_Send to oled group",
@@ -953,6 +953,8 @@ def scanwifi():
         DisplayText(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6])
         time.sleep(0.1)
     return("")
+
+
 def trigger1():
     while GPIO.input(KEY_PRESS_PIN):
         with canvas(device) as draw:
@@ -1372,7 +1374,7 @@ def update():
         time.sleep(5)
 
 def vulnerabilityScan():
-    DisplayText("Remeber:","Firts u need to","perform an Nmap","and then safe the output","","","")
+    DisplayText("Remeber:","Firts u need to","perform an Nmap","and then ","save the output","this is an","experimental feature")
     time.sleep(5)
     DisplayText("","","","this is experimental :C","","","")
     time.sleep(5)
@@ -1402,8 +1404,99 @@ def vulnerabilityScan():
         if ((str(res).split("'")[1])[1] == "-"):
             founded +=1
     print(founded)
-    DisplayText("","","","founded: " + founded ,"","","")
+    DisplayText("","","","founded: " + str(founded) ,"","","")
 
+
+def getSSID():
+    #list wifi APs
+    cmd ="airmon-ng start wlan0 && airmon-ng start wlan0mon"
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    cmd ="airodump-ng wlan0mon -w reportAiro -a &"
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        return()
+    DisplayText("","","","wait","","","")
+    time.sleep(5)
+    cmd="cat reportAiro.txt-01.csv"
+    res = execcmd(cmd)
+    if(res==-1):
+        displayError()
+        exit()
+    res = str(res).replace("\\r","").split("\\n")
+    del res[0]
+    del res[0]
+    toRemove=res.index("Station MAC, First time seen, Last time seen, Power, # packets, BSSID, Probed ESSIDs")
+    res=res[:toRemove-1]
+    for i in range(0,len(res)):
+        res[i] = res[i].split(",")
+        del res[i][-1]
+        res[i]=res[i][-1]+ ","+res[i][3] +","+ res[i][0]
+    ssidlist=res
+    #----------------------------------------------------------
+    listattack=ssidlist
+    maxi=len(listattack) #number of records
+    cur=0
+    retour = ""
+    ligne = ["","","","","","","",""]
+    time.sleep(0.5)
+    while GPIO.input(KEY_LEFT_PIN):
+        #on boucle
+        tok=0
+        if maxi < 7:
+            for n in range(0,7):
+                if n<maxi:
+                    if n == cur:
+                        ligne[n] = ">"+listattack[n]
+                    else:
+                        ligne[n] = " "+listattack[n]
+                else:
+                    ligne[n] = ""
+        else:
+            if cur+7<maxi:
+                for n in range (cur,cur + 7):
+                    if n == cur:
+                        ligne[tok] = ">"+listattack[n]
+                    else:
+                        ligne[tok] = " "+listattack[n]
+                    tok=tok+1
+            else:
+                for n in range(maxi-8,maxi-1):
+                    if n == cur:
+                        ligne[tok] = ">"+listattack[n]
+                    else:
+                        ligne[tok] = " "+listattack[n]                            
+                    tok=tok+1
+        if GPIO.input(KEY_UP_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            cur = cur -1
+            if cur<0:
+                cur = 0
+        if GPIO.input(KEY_DOWN_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            cur = cur + 1
+            if cur>maxi-2:
+                cur = maxi-2
+        if GPIO.input(KEY_RIGHT_PIN): # button is released
+            menu = 1
+        else: # button is pressed:
+            retour = listattack[cur]
+            print(retour)
+            return(retour)
+        #print(str(cur) + " " + listattack[cur])        #debug
+        DisplayText(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6])
+        time.sleep(0.1)
+    return("")
+
+
+
+def deauther():
+    return()
     
         
     
@@ -1503,7 +1596,9 @@ while 1:
                 if curseur == 3:
                     nmap()     
                 if curseur == 4:
-                    vulnerabilityScan()       
+                    vulnerabilityScan()  
+                if curseur == 5:
+                    deauther()     
             if page == 28:
                     #trigger section
                 if curseur == 1:

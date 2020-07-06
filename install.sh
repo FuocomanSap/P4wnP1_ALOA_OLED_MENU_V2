@@ -14,6 +14,7 @@ cp * /root/BeBoXGui/images/
 echo "Copying run script in local P4wnP1 script"
 cd ..
 cp scripts/runmenu.sh /usr/local/P4wnP1/scripts/
+chmod +x /usr/local/P4wnP1/scripts/runmenu.sh
 cp update.sh /root/BeBoXGui/
 mkdir /root/BeBoXGui/nmap
 chmod +x /root/BeBoXGui/update.sh
