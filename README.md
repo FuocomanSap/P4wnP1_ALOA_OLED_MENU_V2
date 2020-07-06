@@ -1,3 +1,6 @@
+# MOVED TO https://github.com/FuocomanSap/P4wnp1-ALOA-Menu-Reworked
+
+
 this is a fork of: https://github.com/beboxos/P4wnP1_ALOA_OLED_MENU_V2
 
 I updated the code to work with python3.7, fixed some bugs and added new features.
