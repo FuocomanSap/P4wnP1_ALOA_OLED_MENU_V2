@@ -1502,7 +1502,7 @@ while 1:
                     hostselect()
                 if curseur == 3:
                     nmap()     
-                if curseur == 3:
+                if curseur == 4:
                     vulnerabilityScan()       
             if page == 28:
                     #trigger section
